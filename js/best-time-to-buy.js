@@ -18,37 +18,8 @@ Output: 0
 Explanation: In this case, no transaction is done, i.e. max profit = 0.
 * */
 
-const maxProfit = (prices) => {
-    const allTransactions = findAllTransactions(prices);
-    const groupedTransactions = groupByConsecutiveSells([...allTransactions], []);
-    const maxTransactions = getMaxProfit(groupedTransactions, allTransactions);
 
-    console.log('%c...max-t', 'color:gold', maxTransactions)
-}
-
-const getMaxProfit = (groupedTransactions, singleTransactions) => {
-    const maxGrouped = groupedTransactions.reduce((max, current) => {
-        const maxProfit = (max[0].profit + max[1].profit);
-        const newProfit = (current[0].profit + current[1].profit);
-
-        max = (newProfit > maxProfit) ? current : max;
-
-        return max;
-    }, [{profit: 0}, {profit: 0}]);
-
-    const maxSingle = singleTransactions.reduce((max, current) => {
-        max = (current.profit > max.profit) ? current : max;
-        return max;
-    }, {profit: 0})
-
-    const maxTrans = ((maxGrouped[0].profit + maxGrouped[1].profit) > maxSingle.profit) ? maxGrouped : maxSingle;
-    const maxValue = Math.max((maxGrouped[0].profit + maxGrouped[1].profit), maxSingle.profit);
-
-    return maxValue;
-}
-
-
-const findAllTransactions = (prices) => {
+const findBestTimes = (prices) => {
     let results = [];
     for (let currentDayIndex = 0; currentDayIndex < prices.length; currentDayIndex++) {
         const buyPrice = prices[currentDayIndex];
@@ -61,7 +32,7 @@ const findAllTransactions = (prices) => {
             const isSellablePrice = (sellPrice > buyPrice);
             const isBetterPrice = (sellPrice > maxSellPrice);
 
-            if (isSellablePrice || isBetterPrice) {
+            if (isSellablePrice && isBetterPrice) {
                 maxSellPrice = sellPrice;
                 maxPriceIndex = nextDayIndex;
                 results.push({
@@ -80,54 +51,24 @@ const findAllTransactions = (prices) => {
     return results;
 }
 
-/*
-* find consecutive sell days
-* find max value
-* */
+console.log('...', findBestTimes([3, 3, 5, 0, 0, 3, 1, 4]))
 
-const groupByConsecutiveSells = (transactions, grouped = []) => {
-    if (transactions.length <= 0) return grouped;
 
-    const sellAfter = transactions.shift();
-
-    transactions.forEach((trans, tIndex) => {
-        if (trans.buyIndex > sellAfter.sellIndex) {
-            grouped.push([sellAfter, trans]);
-            skipIndex = tIndex;
-        }
-    });
-
-    groupByConsecutiveSells(transactions, grouped);
-
-    return grouped;
-}
-// console.log('...', maxProfit([1,2]))
-
-/*
-* DP, sliding window approach
-* */
-var maxProfit2 = (prices) => {
+const maxProfit = (prices) => {
     let t1Cost = Number.MAX_VALUE,
         t2Cost = Number.MAX_VALUE;
     let t1Profit = 0,
         t2Profit = 0;
 
 
-    prices.forEach((price) => {
+    for (let price in prices) {
         // the maximum profit if only one transaction is allowed
         t1Cost = Math.min(t1Cost, price);
-        const runningProfit1 = (price - t1Cost);
-        t1Profit = Math.max(t1Profit, runningProfit1);
-        console.log('%c...prices', 'color:red',price, t1Profit, t2Profit)
-
+        t1Profit = Math.max(t1Profit, price - t1Cost);
         // reinvest the gained profit in the second transaction
         t2Cost = Math.min(t2Cost, price - t1Profit);
-        const runningProfit2 = (price - t2Cost);
-        t2Profit = Math.max(t2Profit, runningProfit2);
-        console.log('%c...prices', 'color:gold',price, t1Profit, t2Profit)
-    });
+        t2Profit = Math.max(t2Profit, price - t2Cost);
+    }
 
-    return t2Profit;
-
+    return t2Profit
 };
-console.log('...', maxProfit2([3,3,5,0,0,3,1,4]))

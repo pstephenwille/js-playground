@@ -1,3 +1,41 @@
+const swapAndReverse = (astring) => {
+    const digitsWithIndex = astring.split('')
+        .reduce((accum, next, idx) => {
+            if (/\d/.test(next)) {
+                accum[idx] = next
+            }
+
+            return accum;
+        }, {});
+
+    const allLetters = astring.replaceAll(/\d/g, '');
+
+    console.log('%c...', 'color:red', allLetters, digitsWithIndex)
+
+}
+swapAndReverse('a1b2c3')
+
+
+/* dutch sort */
+const dutchReverse = (astring)=>{
+    let left = 0;
+    let curr = 0;
+    let right = astring.length - 1;
+    let characters = astring.split('');
+    const lettersRegex = new RegExp(/[a-zA-Z]+/g);
+
+    for (curr; curr < characters.length; curr++) {
+        const currentChar = characters[curr];
+
+        if (lettersRegex.test(currentChar)) {
+
+        }
+    }
+
+}
+
+
+
 /* prime generator */
 function* generatePrimes(num) {
     for (let i = 0; i < num; i++) {
@@ -347,7 +385,9 @@ function outer() {
 
 }
 
-(function () {var a = b = 3;})();
+(function () {
+    var a = b = 3;
+})();
 console.log(b);
 
 function foo1() {
